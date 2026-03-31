@@ -322,6 +322,18 @@ h3 {
   font-size: 0.8rem;
   color: var(--text-light);
 }
+.case-method {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: #FDF0EB;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
 .case h3 {
   font-size: 1.15rem;
   margin-bottom: 12px;
@@ -362,6 +374,18 @@ h3 {
 /* ============================
    ABOUT
    ============================ */
+.about-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+.about-photo img {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  aspect-ratio: 3 / 4;
+}
 .about-content h2 {
   margin-bottom: 24px;
 }
@@ -532,6 +556,13 @@ h3 {
     text-align: center;
   }
 
+  .about-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .about-photo {
+    max-width: 240px;
+  }
   .credibility {
     gap: 20px;
   }
