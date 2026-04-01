@@ -465,8 +465,19 @@ h3 {
 }
 .cta-note {
   font-size: 0.85rem !important;
-  color: #6A6A80 !important;
+  color: #A0A0B0 !important;
   max-width: 440px !important;
+  margin-top: 20px !important;
+  margin-bottom: 0 !important;
+}
+.cta-link {
+  color: var(--accent) !important;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.cta-link:hover {
+  color: var(--accent-hover) !important;
 }
 
 /* ============================
