@@ -22,4 +22,4 @@ Font: [Inter](https://fonts.google.com/specimen/Inter).
 
 ## Contact
 
-[Book an insight session](https://calendar.app.google/iBGwLPBiHCUy7S1s6) · [LinkedIn](https://linkedin.com/in/alicia-a-yanez) · [Email](mailto:aliciaayanez@gmail.com)
+[Book an insight session](https://calendar.app.google/iBGwLPBiHCUy7S1s6) · [LinkedIn](https://linkedin.com/in/alicia-a-yanez) · [Email](mailto:alicia@builtforproduct.com)

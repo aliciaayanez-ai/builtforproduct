@@ -3,14 +3,626 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Built For Product | Helping Founders Build Products That Scale</title>
+  <title>Built For Product v2 Prototype | PM Operating System Upgrades</title>
   <meta name="description" content="Embedded product leadership for startups. I help founders find and fix the product problems that actually matter.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <style>
+/* =============================================
+   Built For Product — Palette 1: Warm Authority
+   ============================================= */
+
+:root {
+  --primary: #1A1A2E;
+  --accent: #E07A5F;
+  --accent-hover: #D06A4F;
+  --bg: #FAF7F2;
+  --bg-alt: #F3EDE4;
+  --text: #2D2D2D;
+  --text-muted: #5A5A5A;
+  --text-light: #8A8A8A;
+  --card-bg: #FFFFFF;
+  --card-border: #E8E2D8;
+  --white: #FFFFFF;
+  --cream: #FAF7F2;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.15s;
+  border: none;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+.btn-lg {
+  padding: 16px 36px;
+  font-size: 16px;
+}
+.btn-sm {
+  padding: 8px 18px;
+  font-size: 13px;
+}
+.btn-white {
+  background: var(--white);
+  color: var(--primary);
+}
+.btn-white:hover {
+  background: var(--cream);
+}
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--primary);
+  letter-spacing: -0.3px;
+}
+h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.35;
+}
+.highlight {
+  color: var(--accent);
+}
+.section-intro {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  max-width: 640px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg);
+  transition: box-shadow 0.3s;
+}
+.nav.scrolled {
+  box-shadow: 0 1px 12px rgba(0,0,0,0.06);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.logo {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--primary);
+}
+.logo span {
+  color: var(--accent);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.nav-links a:hover {
+  color: var(--primary);
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 28px;
+  height: 20px;
+  position: relative;
+}
+.mobile-toggle span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--primary);
+  position: absolute;
+  left: 0;
+  transition: all 0.3s;
+}
+.mobile-toggle span:nth-child(1) { top: 0; }
+.mobile-toggle span:nth-child(2) { top: 9px; }
+.mobile-toggle span:nth-child(3) { top: 18px; }
+.mobile-toggle.open span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+.mobile-toggle.open span:nth-child(2) { opacity: 0; }
+.mobile-toggle.open span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+/* HERO */
+.hero {
+  padding: 140px 0 80px;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+.hero-sub {
+  margin-top: 20px;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  max-width: 560px;
+  line-height: 1.7;
+}
+.hero .btn {
+  margin-top: 32px;
+}
+
+/* SECTIONS */
+.section {
+  padding: 80px 0;
+}
+.section-alt {
+  background: var(--bg-alt);
+}
+
+/* PAIN CARDS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+.card-icon {
+  width: 44px;
+  height: 44px;
+  background: #FDF0EB;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.card h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* PROCESS STEPS */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 8px;
+}
+.step {
+  position: relative;
+}
+.step-num {
+  width: 44px;
+  height: 44px;
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 800;
+  font-size: 1.1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.step h3 {
+  margin-bottom: 8px;
+}
+.step p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* --- NEW: AI DIFFERENTIATOR --- */
+.differentiator {
+  padding: 64px 0;
+  background: var(--primary);
+  color: var(--cream);
+}
+.differentiator h2 {
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+.differentiator .section-intro {
+  color: #A0A0B0;
+  margin-bottom: 36px;
+}
+.diff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.diff-card {
+  border: 1px solid #2A2A3E;
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+.diff-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.diff-card h3 {
+  color: var(--cream);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+.diff-card p {
+  font-size: 0.85rem;
+  color: #8A8A9A;
+  line-height: 1.6;
+}
+
+/* CASE STUDIES */
+.cases {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 8px;
+}
+.case {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.case:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+}
+.case-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.case-company {
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.case-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.case h3 {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+}
+.case-problem {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+.case-action {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.case-results {
+  display: flex;
+  gap: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--card-border);
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+}
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* --- NEW: Method tag on case studies --- */
+.case-method {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: #FDF0EB;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+
+/* ABOUT */
+.about-content h2 {
+  margin-bottom: 24px;
+}
+.about-text p {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 16px;
+  max-width: 680px;
+}
+.credibility {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.credibility span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* TESTIMONIALS */
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 8px;
+}
+.testimonial {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 28px;
+  border-left: 3px solid var(--accent);
+}
+.testimonial p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-style: italic;
+  margin-bottom: 14px;
+}
+.testimonial cite {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+  font-style: normal;
+}
+
+/* CTA */
+.section-cta {
+  background: var(--primary);
+  color: var(--cream);
+  text-align: center;
+  padding: 80px 0;
+}
+.section-cta h2 {
+  color: var(--cream);
+  margin-bottom: 16px;
+}
+.section-cta p {
+  color: #A0A0B0;
+  font-size: 1.05rem;
+  max-width: 520px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+.section-cta .btn {
+  margin-bottom: 20px;
+}
+.cta-note {
+  font-size: 0.85rem !important;
+  color: #6A6A80 !important;
+  max-width: 440px !important;
+}
+
+/* FOOTER */
+.footer {
+  background: var(--primary);
+  border-top: 1px solid #2A2A3E;
+  padding: 32px 0;
+}
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.logo-footer {
+  color: var(--cream);
+}
+.logo-footer span {
+  color: var(--accent);
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-links a {
+  font-size: 0.85rem;
+  color: #8A8A9A;
+  transition: color 0.2s;
+}
+.footer-links a:hover {
+  color: var(--cream);
+}
+.footer-copy {
+  font-size: 0.8rem;
+  color: #5A5A6A;
+}
+
+/* --- PROTOTYPE BANNER --- */
+.prototype-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--accent);
+  color: var(--white);
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 200;
+  letter-spacing: 0.3px;
+}
+.prototype-banner a {
+  color: var(--white);
+  text-decoration: underline;
+  margin-left: 8px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .hero {
+    padding: 110px 0 60px;
+    min-height: auto;
+  }
+  .card-grid,
+  .steps,
+  .diff-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .testimonials {
+    grid-template-columns: 1fr;
+  }
+  .case-results {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: var(--bg);
+    flex-direction: column;
+    padding: 24px;
+    gap: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .mobile-toggle {
+    display: block;
+  }
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .credibility {
+    gap: 20px;
+  }
+  .section {
+    padding: 60px 0;
+  }
+  .section-cta {
+    padding: 60px 0;
+  }
+  .differentiator {
+    padding: 48px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  h2 {
+    font-size: 1.4rem;
+  }
+  .case {
+    padding: 24px 20px;
+  }
+  .card {
+    padding: 24px 20px;
+  }
+}
+  </style>
 </head>
 <body>
+
+  <!-- PROTOTYPE BANNER -->
+  <div class="prototype-banner">
+    PROTOTYPE v2 — PM Operating System upgrades. Changes marked with * in nav.
+  </div>
 
   <!-- NAV -->
   <nav class="nav">
@@ -18,8 +630,8 @@
       <a href="#" class="logo">Built<span>For</span>Product</a>
       <div class="nav-links">
         <a href="#problem">Why</a>
-        <a href="#how">How</a>
-        <a href="#work">Work</a>
+        <a href="#how">How *</a>
+        <a href="#work">Work *</a>
         <a href="#about">About</a>
         <a href="#start" class="btn btn-sm">Book a Session</a>
       </div>
@@ -38,7 +650,7 @@
     </div>
   </section>
 
-  <!-- PROBLEM -->
+  <!-- PROBLEM — UPDATED: added 4th card for AI founders -->
   <section id="problem" class="section">
     <div class="container">
       <p class="section-intro">You're shipping. Metrics aren't moving. Users churn and you're not sure why — or worse, you think you know but the fixes aren't working. It's almost always the same thing: your product has a trust problem.</p>
@@ -68,7 +680,7 @@
     </div>
   </section>
 
-  <!-- HOW -->
+  <!-- HOW — REWRITTEN with PM OS methodology -->
   <section id="how" class="section section-alt">
     <div class="container">
       <h2>I don't just advise. <span class="highlight">I embed.</span></h2>
@@ -93,7 +705,7 @@
     </div>
   </section>
 
-  <!-- CASE STUDIES -->
+  <!-- CASE STUDIES — UPGRADED with methodology tags and richer descriptions -->
   <section id="work" class="section">
     <div class="container">
       <h2>Real founder problems. <span class="highlight">Real results.</span></h2>
@@ -193,23 +805,19 @@
 
   <!-- ABOUT -->
   <section id="about" class="section section-alt">
-    <div class="container about-layout">
-      <div class="about-photo">
-        <img src="assets/headshot.jpg" alt="Alicia Yanez">
+    <div class="container about-content">
+      <h2>Why I do this</h2>
+      <div class="about-text">
+        <p>I spent 13 years building products at Etsy, Walmart, and Uber — leading orgs of 50-70 people, shipping ML systems that made millions of autonomous decisions, and scaling marketplaces from scratch.</p>
+        <p>But the work I love most is the early chaos. The moment a founder says "something isn't working and I can't figure out what." That's where I come alive — diagnosing the real problem, aligning the team, and shipping the fix.</p>
+        <p>Today I partner with founders from pre-seed through Series D as an embedded product operator. I bring expertise in B2C, SaaS, AI, and marketplaces. Whether you need hands-on roadmap execution or strategic clarity, I bring energy, speed, and real-world experience.</p>
       </div>
-      <div class="about-content">
-        <h2>Who I am</h2>
-        <div class="about-text">
-          <p>At 28, I moved to Lima to launch Uber in Peru — no supply infrastructure, no playbook. Grew it to 1M weekly trips. I ran Walmart's driver app through the pandemic and took it from 15K to 115K weekly deliveries. At Etsy, I led the team that turned 40% missing delivery dates into $280M in incremental revenue. 12 years of this.</p>
-          <p>Every one of those problems looked like a feature problem. None of them were. They were trust problems — and that's what I look for first when I work with founders now.</p>
-        </div>
-        <div class="credibility">
-          <span>Etsy</span>
-          <span>Walmart</span>
-          <span>Uber</span>
-          <span>Arcade AI</span>
-          <span>eLLMo</span>
-        </div>
+      <div class="credibility">
+        <span>Etsy</span>
+        <span>Walmart</span>
+        <span>Uber</span>
+        <span>Arcade AI</span>
+        <span>eLLMo</span>
       </div>
     </div>
   </section>
@@ -245,7 +853,7 @@
       <h2>Let's figure out if I can help.</h2>
       <p>Start with a 30-minute insight session. No pitch, no pressure. I'll listen to what you're facing, share what I see, and we'll figure out together if there's a fit.</p>
       <a href="https://calendar.app.google/iBGwLPBiHCUy7S1s6" class="btn btn-lg btn-white">Book a Free Insight Session</a>
-      <p class="cta-note" style="margin-top: 20px;">Not ready to talk yet? <a href="review/" style="color: var(--accent); font-weight: 600; text-decoration: underline;">Get a free 8-Second Website Review</a> — I'll tell you exactly what a prospect sees in their first 8 seconds on your site.</p>
+      <p class="cta-note">Flexible engagements for early-stage and growth-stage teams. We'll scope the right format together — from a focused sprint to an embedded partnership.</p>
     </div>
   </section>
 
@@ -262,21 +870,18 @@
   </footer>
 
   <script>
-    // Mobile nav toggle
     const toggle = document.querySelector('.mobile-toggle');
     const navLinks = document.querySelector('.nav-links');
     toggle.addEventListener('click', () => {
       navLinks.classList.toggle('open');
       toggle.classList.toggle('open');
     });
-    // Close nav on link click
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('open');
         toggle.classList.remove('open');
       });
     });
-    // Sticky nav shadow
     window.addEventListener('scroll', () => {
       document.querySelector('.nav').classList.toggle('scrolled', window.scrollY > 20);
     });
