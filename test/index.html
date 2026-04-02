@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant 8-Second Website Test | Built For Product</title>
+  <meta name="description" content="Does your website pass the 8-second test? Enter your URL and find out instantly. Free, no signup required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* --- Test Page Specific --- */
+    .test-hero {
+      padding: 140px 0 60px;
+      min-height: auto;
+      text-align: center;
+    }
+    .test-hero h1 {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .test-hero .hero-sub {
+      max-width: 560px;
+      margin: 20px auto 0;
+      text-align: center;
+    }
+
+    /* URL Input */
+    .url-form {
+      max-width: 560px;
+      margin: 36px auto 0;
+      display: flex;
+      gap: 12px;
+    }
+    .url-input {
+      flex: 1;
+      padding: 16px 20px;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      background: var(--card-bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .url-input:focus {
+      border-color: var(--accent);
+    }
+    .url-input::placeholder {
+      color: var(--text-light);
+    }
+    .url-submit {
+      padding: 16px 28px;
+      background: var(--accent);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Inter', system-ui, sans-serif;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .url-submit:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .url-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .url-note {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      margin-top: 12px;
+    }
+
+    /* Error */
+    .url-error {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #E74C3C;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* Loading */
+    .loading-section {
+      display: none;
+      text-align: center;
+      padding: 80px 0 120px;
+    }
+    .loading-section.visible {
+      display: block;
+    }
+    .loader {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--card-border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 24px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .loading-step {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      transition: color 0.3s;
+    }
+    .loading-step.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .loading-step.done {
+      color: var(--text-muted);
+    }
+
+    /* Results */
+    .results-section {
+      display: none;
+      padding: 80px 0;
+    }
+    .results-section.visible {
+      display: block;
+    }
+
+    /* Score Ring */
+    .score-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .score-ring-wrap {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 24px;
+    }
+    .score-ring-bg,
+    .score-ring-fill {
+      position: absolute;
+      top: 0; left: 0;
+      width: 180px;
+      height: 180px;
+    }
+    .score-ring-bg circle,
+    .score-ring-fill circle {
+      fill: none;
+      stroke-width: 10;
+      cx: 90;
+      cy: 90;
+      r: 80;
+    }
+    .score-ring-bg circle {
+      stroke: var(--card-border);
+    }
+    .score-ring-fill circle {
+      stroke: var(--accent);
+      stroke-dasharray: 502.65;
+      stroke-dashoffset: 502.65;
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      transition: stroke-dashoffset 1.2s ease-out, stroke 0.3s;
+    }
+    .score-ring-fill.pass circle {
+      stroke: #27AE60;
+    }
+    .score-ring-fill.fail circle {
+      stroke: #E74C3C;
+    }
+    .score-number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .score-number span {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    .score-verdict {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+    .score-verdict.pass { color: #27AE60; }
+    .score-verdict.fail { color: #E74C3C; }
+    .score-site {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Score Breakdown */
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .breakdown-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .breakdown-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 1.2rem;
+    }
+    .breakdown-icon.good {
+      background: #E8F8F0;
+      color: #27AE60;
+    }
+    .breakdown-icon.warn {
+      background: #FFF3E0;
+      color: #F39C12;
+    }
+    .breakdown-icon.bad {
+      background: #FDEBEB;
+      color: #E74C3C;
+    }
+    .breakdown-score {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .breakdown-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .breakdown-detail {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Timeline */
+    .timeline-section {
+      margin-bottom: 48px;
+    }
+    .timeline-section h2 {
+      margin-bottom: 20px;
+    }
+    .timeline-card {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 12px;
+    }
+    .timeline-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .timeline-badge.good { background: #27AE60; }
+    .timeline-badge.warn { background: #F39C12; }
+    .timeline-badge.bad { background: #E74C3C; }
+    .timeline-content { flex: 1; }
+    .timeline-content strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .timeline-content .timeline-quote {
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.88rem;
+      margin-bottom: 6px;
+    }
+    .timeline-content p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Findings */
+    .findings {
+      margin-bottom: 48px;
+    }
+    .findings h2 {
+      margin-bottom: 20px;
+    }
+    .finding-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+    }
+    .finding-card.severity-high { border-left-color: #E74C3C; }
+    .finding-card.severity-medium { border-left-color: #F39C12; }
+    .finding-card.severity-low { border-left-color: #27AE60; }
+    .finding-num {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .finding-card h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    .finding-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+    .finding-row-label {
+      font-weight: 700;
+      color: var(--primary);
+      white-space: nowrap;
+      min-width: 100px;
+    }
+    .finding-row-text {
+      color: var(--text-muted);
+    }
+
+    /* Quick Wins */
+    .quickwins {
+      margin-bottom: 48px;
+    }
+    .quickwins h2 {
+      margin-bottom: 20px;
+    }
+    .quickwin-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .quickwin-item:last-child { border-bottom: none; }
+    .quickwin-num {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      font-size: 0.8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .quickwin-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .quickwin-text strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* CTA Section */
+    .results-cta {
+      background: var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      text-align: center;
+    }
+    .results-cta h2 {
+      color: var(--cream);
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+    }
+    .results-cta p {
+      color: #A0A0B0;
+      font-size: 0.95rem;
+      max-width: 520px;
+      margin: 0 auto 28px;
+      line-height: 1.65;
+    }
+    .results-cta .btn {
+      margin-right: 12px;
+      margin-bottom: 12px;
+    }
+
+    /* Try Again */
+    .try-again {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .try-again a {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .try-again a:hover {
+      text-decoration: underline;
+    }
+
+    /* Email Gate */
+    .gate-section {
+      display: none;
+      padding: 80px 0 120px;
+      text-align: center;
+    }
+    .gate-section.visible {
+      display: block;
+    }
+    .gate-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 48px 40px;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    }
+    .gate-icon {
+      width: 64px;
+      height: 64px;
+      background: #FDF0EB;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.8rem;
+    }
+    .gate-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .gate-card .gate-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .gate-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .gate-input {
+      padding: 14px 18px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--bg);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      text-align: center;
+    }
+    .gate-input:focus {
+      border-color: var(--accent);
+    }
+    .gate-input::placeholder {
+      color: var(--text-light);
+    }
+    .gate-submit {
+      padding: 14px 28px;
+      background: var(--accent);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Inter', system-ui, sans-serif;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .gate-submit:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .gate-note {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+    .gate-preview {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 10px;
+    }
+    .gate-preview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .gate-preview-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-light);
+    }
+    .gate-preview-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .gate-preview-val.tease {
+      filter: blur(6px);
+      user-select: none;
+    }
+
+    @media (max-width: 768px) {
+      .url-form {
+        flex-direction: column;
+      }
+      .breakdown {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .test-hero {
+        padding: 110px 0 40px;
+      }
+      .gate-card {
+        padding: 32px 24px;
+      }
+    }
+    @media (max-width: 480px) {
+      .breakdown {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="../" class="logo">Built<span>For</span>Product</a>
+      <div class="nav-links">
+        <a href="../#problem">Why</a>
+        <a href="../#how">How</a>
+        <a href="../#work">Work</a>
+        <a href="../#about">About</a>
+        <a href="https://calendar.app.google/iBGwLPBiHCUy7S1s6" class="btn btn-sm">Book a Session</a>
+      </div>
+      <button class="mobile-toggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO + INPUT -->
+  <section class="hero test-hero" id="test-input">
+    <div class="container">
+      <h1>Does your website pass<br><span class="highlight">the 8-second test?</span></h1>
+      <p class="hero-sub">When a prospect lands on your site, they decide in 8 seconds: What do you do? Who is it for? Why should I care? Enter your URL and find out instantly.</p>
+      <div class="url-form">
+        <input type="url" class="url-input" id="urlInput" placeholder="https://yoursite.com" autocomplete="url">
+        <button class="url-submit" id="runTest" onclick="runTest()">Run the Test</button>
+      </div>
+      <p class="url-note">Free. No signup. Results in seconds.</p>
+      <p class="url-error" id="urlError"></p>
+    </div>
+  </section>
+
+  <!-- LOADING -->
+  <section class="loading-section" id="loadingSection">
+    <div class="container">
+      <div class="loader"></div>
+      <div class="loading-steps">
+        <div class="loading-step" id="step1">Fetching your website...</div>
+        <div class="loading-step" id="step2">Scanning headline clarity...</div>
+        <div class="loading-step" id="step3">Checking audience signals...</div>
+        <div class="loading-step" id="step4">Evaluating CTAs and trust...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMAIL GATE -->
+  <section class="gate-section" id="gateSection">
+    <div class="container">
+      <div class="gate-card">
+        <div class="gate-icon">&#9889;</div>
+        <h2>Your results are ready</h2>
+        <p class="gate-sub">Enter your email to see your score, breakdown, and what to fix first.</p>
+        <div class="gate-preview">
+          <div class="gate-preview-item">
+            <span class="gate-preview-label">Score</span>
+            <span class="gate-preview-val tease" id="gateScorePreview">72</span>
+          </div>
+          <div class="gate-preview-item">
+            <span class="gate-preview-label">Verdict</span>
+            <span class="gate-preview-val tease" id="gateVerdictPreview">Pass</span>
+          </div>
+          <div class="gate-preview-item">
+            <span class="gate-preview-label">Findings</span>
+            <span class="gate-preview-val tease" id="gateFindingsPreview">3</span>
+          </div>
+        </div>
+        <div class="gate-form">
+          <input type="email" class="gate-input" id="gateEmail" placeholder="your@email.com" autocomplete="email">
+          <input type="text" class="gate-input" id="gateName" placeholder="First name (optional)">
+          <button class="gate-submit" onclick="unlockResults()">Show My Results</button>
+        </div>
+        <p class="gate-note">No spam. Just your results — and maybe a follow-up if I spot something worth flagging.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results-section" id="resultsSection">
+    <div class="container">
+
+      <!-- Score -->
+      <div class="score-header">
+        <div class="score-ring-wrap">
+          <svg class="score-ring-bg" viewBox="0 0 180 180"><circle></circle></svg>
+          <svg class="score-ring-fill" id="scoreRing" viewBox="0 0 180 180"><circle></circle></svg>
+          <div class="score-number" id="scoreNumber">0<span>/100</span></div>
+        </div>
+        <div class="score-verdict" id="scoreVerdict"></div>
+        <div class="score-site" id="scoreSite"></div>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="breakdown" id="breakdown"></div>
+
+      <!-- 8-Second Timeline -->
+      <div class="timeline-section" id="timelineSection">
+        <h2>What a visitor sees in 8 seconds</h2>
+        <div id="timelineCards"></div>
+      </div>
+
+      <!-- Findings -->
+      <div class="findings" id="findings">
+        <h2>What we found</h2>
+      </div>
+
+      <!-- Quick Wins -->
+      <div class="quickwins" id="quickwins">
+        <h2>Fix these first</h2>
+        <div id="quickwinsList"></div>
+      </div>
+
+      <!-- CTA -->
+      <div style="background:#1A1A2E; border-radius:16px; padding:48px 40px; text-align:center; position:relative; z-index:1;">
+        <h2 style="color:#FAF7F2; font-size:1.5rem; margin-bottom:12px;">This test scores the structure.<br>The full review catches what's actually costing you deals.</h2>
+        <p style="color:#A0A0B0; font-size:0.95rem; max-width:540px; margin:0 auto 28px; line-height:1.65;">What you just saw is automated. The full review is different — I personally look at your site, write up specific rewrites for your business, and send you a one-pager. Free. Within a week.</p>
+        <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+          <button id="requestReviewBtn" onclick="requestFullReview()" style="display:inline-block; background:#FFFFFF; color:#1A1A2E; font-weight:600; font-size:0.95rem; padding:14px 28px; border-radius:8px; border:none; cursor:pointer; font-family:'Inter',system-ui,sans-serif;">Request the Full Review (Free)</button>
+          <a href="https://calendar.app.google/iBGwLPBiHCUy7S1s6" target="_blank" rel="noopener" style="display:inline-block; background:#E07A5F; color:#FFFFFF; font-weight:600; font-size:0.95rem; padding:14px 28px; border-radius:8px; text-decoration:none; cursor:pointer;">Book a Free 30-Min Call</a>
+        </div>
+        <p id="reviewConfirmation" style="display:none; color:#27AE60; font-size:0.95rem; margin-top:20px; font-weight:600;"></p>
+      </div>
+
+      <!-- Try Again -->
+      <div style="text-align:center; margin-top:32px;">
+        <a onclick="resetTest()" style="color:#E07A5F; font-weight:600; font-size:0.9rem; cursor:pointer; text-decoration:none;">Test another site</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="../" class="logo logo-footer">Built<span>For</span>Product</a>
+      <div class="footer-links">
+        <a href="mailto:alicia@builtforproduct.com">alicia@builtforproduct.com</a>
+        <a href="https://linkedin.com/in/alicia-a-yanez" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <p class="footer-copy">&copy; 2026 Built For Product</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.querySelector('.mobile-toggle');
+    const navLinksEl = document.querySelector('.nav-links');
+    toggle.addEventListener('click', () => {
+      navLinksEl.classList.toggle('open');
+      toggle.classList.toggle('open');
+    });
+    navLinksEl.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinksEl.classList.remove('open');
+        toggle.classList.remove('open');
+      });
+    });
+    window.addEventListener('scroll', () => {
+      document.querySelector('.nav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Allow Enter key to submit
+    document.getElementById('urlInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') runTest();
+    });
+
+    // =====================
+    // ANALYSIS ENGINE
+    // =====================
+
+    function normalizeUrl(url) {
+      url = url.trim();
+      if (!url) return null;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      try { new URL(url); return url; }
+      catch { return null; }
+    }
+
+    async function fetchSiteHtml(url) {
+      // Try multiple CORS proxies for reliability
+      const proxies = [
+        u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+        u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+        u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+        u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+      ];
+      for (const proxy of proxies) {
+        try {
+          const res = await fetch(proxy(url), { signal: AbortSignal.timeout(15000) });
+          if (res.ok) {
+            const text = await res.text();
+            // allorigins /get endpoint wraps in JSON
+            try {
+              const json = JSON.parse(text);
+              if (json.contents) return json.contents;
+            } catch {}
+            // If it's raw HTML, return directly
+            if (text.includes('<') && text.length > 100) return text;
+          }
+        } catch {}
+      }
+      return null;
+    }
+
+    function analyzeHtml(html, url) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const body = doc.body;
+      if (!body) return null;
+
+      // Helper: get visible text from elements
+      const getText = (els) => Array.from(els).map(e => e.textContent.trim()).filter(Boolean);
+      const getFirst = (sel) => { const el = doc.querySelector(sel); return el ? el.textContent.trim() : ''; };
+
+      // All visible text (first ~2000 chars to simulate above the fold)
+      const allText = body.textContent.replace(/\s+/g, ' ').trim().slice(0, 3000).toLowerCase();
+
+      // ============================
+      // 1. HEADLINE CLARITY (25 pts)
+      // ============================
+      let headlineScore = 0;
+      let headlineDetail = '';
+      const h1 = getFirst('h1');
+      const h2s = getText(doc.querySelectorAll('h2'));
+      const headline = h1 || h2s[0] || '';
+
+      if (h1) {
+        headlineScore += 10; // Has an H1
+        if (h1.length > 5 && h1.length < 80) {
+          headlineScore += 8; // Good length
+          headlineDetail = `"${h1.slice(0, 60)}${h1.length > 60 ? '...' : ''}" — clear and concise.`;
+        } else if (h1.length >= 80) {
+          headlineScore += 3;
+          headlineDetail = `Your headline is ${h1.length} characters — too long. Aim for under 60.`;
+        } else {
+          headlineScore += 4;
+          headlineDetail = `Your headline is very short. Make sure it communicates what you do.`;
+        }
+        // Penalize generic headlines
+        const genericWords = ['welcome', 'home', 'hello', 'landing page', 'coming soon'];
+        const isGeneric = genericWords.some(w => h1.toLowerCase().includes(w));
+        if (!isGeneric) {
+          headlineScore += 7;
+        } else {
+          headlineDetail = `"${h1.slice(0, 40)}" is too generic. Your headline should say what you do, not greet people.`;
+        }
+      } else if (h2s.length > 0) {
+        headlineScore += 8;
+        headlineDetail = `No H1 tag found — your site uses H2s instead. Add a clear H1 headline.`;
+      } else {
+        headlineDetail = `No headline found. A visitor has no idea what you do in the first 2 seconds.`;
+      }
+
+      // ============================
+      // 2. AUDIENCE SIGNAL (25 pts)
+      // ============================
+      let audienceScore = 0;
+      let audienceDetail = '';
+
+      // Check for audience-targeting language
+      const audiencePatterns = [
+        /\bfor (founders|startups|teams|developers|creators|businesses|companies|brands|agencies|marketers|designers|engineers|leaders|managers|professionals|freelancers|entrepreneurs)\b/i,
+        /\b(founders|startups|small businesses|enterprises|teams|developers|creators|brands)\b.*\b(need|want|struggle|deserve|can|should)\b/i,
+        /\bwhether you['']re\b/i,
+        /\bbuilt for\b/i,
+        /\bdesigned for\b/i,
+        /\bmade for\b/i,
+        /\bperfect for\b/i,
+        /\bideal for\b/i,
+        /\b(saas|b2b|b2c|e-?commerce|marketplace|fintech|healthtech|edtech)\b/i,
+      ];
+
+      let audienceMatches = 0;
+      audiencePatterns.forEach(p => { if (p.test(allText)) audienceMatches++; });
+
+      if (audienceMatches >= 3) {
+        audienceScore = 25;
+        audienceDetail = 'Your copy clearly signals who this is for. A visitor self-selects quickly.';
+      } else if (audienceMatches >= 2) {
+        audienceScore = 20;
+        audienceDetail = 'Some audience signals present, but could be more specific about who this is for.';
+      } else if (audienceMatches >= 1) {
+        audienceScore = 12;
+        audienceDetail = 'Weak audience signal. A visitor can\'t quickly tell if this is for them.';
+      } else {
+        audienceScore = 4;
+        audienceDetail = 'No clear audience targeting. Your site talks about what you do but not who it\'s for.';
+      }
+
+      // Bonus: check subheadline/hero paragraph
+      const heroParagraphs = doc.querySelectorAll('h1 + p, h1 ~ p, .hero p, [class*="hero"] p, [class*="subtitle"], [class*="subhead"]');
+      if (heroParagraphs.length > 0) {
+        audienceScore = Math.min(25, audienceScore + 3);
+      }
+
+      // ============================
+      // 3. CLEAR CTA (25 pts)
+      // ============================
+      let ctaScore = 0;
+      let ctaDetail = '';
+
+      const buttons = doc.querySelectorAll('button, a[class*="btn"], a[class*="button"], a[class*="cta"], [class*="btn"], input[type="submit"], a[role="button"]');
+      const links = doc.querySelectorAll('a[href]');
+      const ctaWords = /\b(get started|sign up|start|try|book|schedule|demo|contact|buy|subscribe|join|download|learn more|request|free trial|start free|get access)\b/i;
+
+      let ctaCount = 0;
+      let ctaTexts = [];
+      buttons.forEach(btn => {
+        const text = btn.textContent.trim();
+        if (ctaWords.test(text)) {
+          ctaCount++;
+          ctaTexts.push(text.slice(0, 40));
+        }
+      });
+
+      // Also check links that look like CTAs
+      links.forEach(link => {
+        const text = link.textContent.trim();
+        if (ctaWords.test(text) && text.length < 50) {
+          ctaCount++;
+          ctaTexts.push(text.slice(0, 40));
+        }
+      });
+      // Deduplicate
+      ctaTexts = [...new Set(ctaTexts)];
+      ctaCount = ctaTexts.length;
+
+      if (ctaCount === 1) {
+        ctaScore = 25;
+        ctaDetail = `One clear CTA: "${ctaTexts[0]}". Focused and decisive.`;
+      } else if (ctaCount === 2) {
+        ctaScore = 20;
+        ctaDetail = `Two CTAs found. Consider which one is the primary action — too many choices slows decisions.`;
+      } else if (ctaCount >= 3) {
+        ctaScore = 14;
+        ctaDetail = `${ctaCount} CTAs competing for attention. When everything is a call to action, nothing is.`;
+      } else {
+        // Check for any button at all
+        if (buttons.length > 0) {
+          ctaScore = 10;
+          ctaDetail = 'Buttons found, but none have clear action language. Use verbs: "Get Started", "Book a Demo".';
+        } else {
+          ctaScore = 2;
+          ctaDetail = 'No clear call to action found. A visitor doesn\'t know what to do next.';
+        }
+      }
+
+      // ============================
+      // 4. TRUST SIGNALS (25 pts)
+      // ============================
+      let trustScore = 0;
+      let trustDetail = '';
+      let trustSignals = [];
+
+      // Social proof: testimonials, quotes
+      const hasTestimonials = doc.querySelectorAll('blockquote, [class*="testimonial"], [class*="review"], [class*="quote"]').length > 0;
+      if (hasTestimonials) { trustScore += 8; trustSignals.push('testimonials'); }
+
+      // Logos / brand mentions
+      const logoEls = doc.querySelectorAll('[class*="logo"], [class*="brand"], [class*="partner"], [class*="client"], [class*="trusted"]');
+      const hasLogos = Array.from(logoEls).some(el => {
+        // Filter out the site's own logo
+        return !el.closest('nav') && !el.closest('footer') && !el.closest('header');
+      });
+      if (hasLogos) { trustScore += 6; trustSignals.push('company logos'); }
+
+      // Numbers / metrics
+      const numberPatterns = /\b(\d{1,3}[,.]?\d{3}\+?|\d+%|\$\d+[MBK]?|\d+x|\d+\+)\b/;
+      if (numberPatterns.test(allText)) { trustScore += 5; trustSignals.push('concrete numbers'); }
+
+      // Social proof words
+      const proofWords = /\b(trusted by|used by|loved by|customers|clients|companies|teams use|people use|stars?|rating)\b/i;
+      if (proofWords.test(allText)) { trustScore += 3; trustSignals.push('proof language'); }
+
+      // Images (non-icon)
+      const images = doc.querySelectorAll('img[src]');
+      const hasContentImages = Array.from(images).some(img => {
+        const src = (img.getAttribute('src') || '').toLowerCase();
+        return !src.includes('icon') && !src.includes('logo') && (img.width > 100 || !img.width);
+      });
+      if (hasContentImages) { trustScore += 3; trustSignals.push('visual content'); }
+
+      trustScore = Math.min(25, trustScore);
+
+      if (trustScore >= 20) {
+        trustDetail = `Strong trust signals: ${trustSignals.join(', ')}. Visitors see proof fast.`;
+      } else if (trustScore >= 12) {
+        trustDetail = `Some trust signals (${trustSignals.join(', ')}), but there's room to add more social proof above the fold.`;
+      } else if (trustScore > 0) {
+        trustDetail = `Minimal trust signals. Add testimonials, customer logos, or concrete numbers.`;
+      } else {
+        trustDetail = 'No trust signals found. No testimonials, no logos, no numbers. A visitor has no reason to believe you.';
+      }
+
+      // ============================
+      // TOTAL
+      // ============================
+      const total = headlineScore + audienceScore + ctaScore + trustScore;
+      const pass = total >= 60;
+
+      // Build findings
+      const findings = [];
+      const scores = [
+        { label: 'Headline', score: headlineScore, max: 25, detail: headlineDetail },
+        { label: 'Audience', score: audienceScore, max: 25, detail: audienceDetail },
+        { label: 'CTA', score: ctaScore, max: 25, detail: ctaDetail },
+        { label: 'Trust', score: trustScore, max: 25, detail: trustDetail },
+      ];
+
+      // Sort worst first for findings
+      const sorted = [...scores].sort((a, b) => (a.score / a.max) - (b.score / b.max));
+      sorted.forEach(s => {
+        if (s.score < s.max) {
+          findings.push({ area: s.label, detail: s.detail, severity: s.score < 12 ? 'high' : s.score < 20 ? 'medium' : 'low' });
+        }
+      });
+
+      // ============================
+      // TIMELINE
+      // ============================
+      const timeline = [];
+
+      // 0-2s: First impression — headline
+      if (h1) {
+        const h1Good = headlineScore >= 20;
+        timeline.push({
+          time: '0–2s',
+          label: 'First impression',
+          quote: h1.slice(0, 80),
+          assessment: h1Good
+            ? 'Your headline lands. A visitor immediately gets a signal about what this is.'
+            : h1.length >= 80
+              ? 'Your headline is too long to scan in 2 seconds. By the time they parse it, they\'re already deciding to leave.'
+              : 'Your headline is vague. A visitor can\'t tell what you do from the first thing they read.',
+          level: h1Good ? 'good' : headlineScore >= 12 ? 'warn' : 'bad'
+        });
+      } else {
+        timeline.push({
+          time: '0–2s',
+          label: 'First impression',
+          quote: '(no headline found)',
+          assessment: 'There\'s no clear headline. A visitor\'s eyes have nowhere to land. They\'re already confused.',
+          level: 'bad'
+        });
+      }
+
+      // 2-5s: Value understanding — subheadline + audience
+      const subEl = doc.querySelector('h1 + p, h1 ~ p, [class*="hero"] p, [class*="subtitle"], [class*="sub"]');
+      const subText = subEl ? subEl.textContent.trim().slice(0, 120) : '';
+      if (subText && audienceScore >= 15) {
+        timeline.push({
+          time: '2–5s',
+          label: 'Who is this for?',
+          quote: subText + (subText.length >= 120 ? '...' : ''),
+          assessment: 'Your supporting copy helps a visitor self-select. They can tell if this is for them.',
+          level: 'good'
+        });
+      } else if (subText) {
+        timeline.push({
+          time: '2–5s',
+          label: 'Who is this for?',
+          quote: subText + (subText.length >= 120 ? '...' : ''),
+          assessment: 'There\'s supporting text, but it doesn\'t clearly signal who this product is for. A visitor is still wondering: "Is this for me?"',
+          level: 'warn'
+        });
+      } else {
+        timeline.push({
+          time: '2–5s',
+          label: 'Who is this for?',
+          quote: '(no supporting text found)',
+          assessment: 'After the headline, there\'s nothing to elaborate. A visitor has to scroll and hunt for context — most won\'t.',
+          level: 'bad'
+        });
+      }
+
+      // 5-8s: Decision moment — CTA
+      if (ctaTexts.length === 1) {
+        timeline.push({
+          time: '5–8s',
+          label: 'What should I do?',
+          quote: ctaTexts[0],
+          assessment: 'One clear call to action. The visitor knows exactly what step to take. No decision fatigue.',
+          level: 'good'
+        });
+      } else if (ctaTexts.length >= 2) {
+        timeline.push({
+          time: '5–8s',
+          label: 'What should I do?',
+          quote: ctaTexts.slice(0, 3).join('" / "'),
+          assessment: `${ctaTexts.length} competing actions visible. The visitor has to think about which one to click — and thinking means leaving.`,
+          level: ctaTexts.length <= 2 ? 'warn' : 'bad'
+        });
+      } else {
+        timeline.push({
+          time: '5–8s',
+          label: 'What should I do?',
+          quote: '(no clear CTA found)',
+          assessment: 'No obvious next step. The 8 seconds are up and the visitor has no door to walk through. They leave.',
+          level: 'bad'
+        });
+      }
+
+      // ============================
+      // RICH FINDINGS
+      // ============================
+      const richFindings = [];
+
+      if (headlineScore < 25) {
+        const whatsHappening = headlineScore === 0
+          ? 'No H1 headline on the page.'
+          : headlineScore < 15
+            ? `Your headline "${h1.slice(0, 50)}${h1.length > 50 ? '...' : ''}" doesn't clearly communicate what you do.`
+            : `Your headline works but has room to be sharper.`;
+        const whyItMatters = headlineScore < 15
+          ? 'The headline is the single most-read element on any page. If it doesn\'t land in 2 seconds, nothing else matters.'
+          : 'A good headline converts scanners into readers. A great one makes them stay.';
+        const fix = headlineScore === 0
+          ? 'Add an H1 tag that completes the sentence: "We help [audience] do [thing] so they can [outcome]."'
+          : h1 && h1.length >= 80
+            ? 'Cut your headline to under 60 characters. Remove any word that doesn\'t earn its place.'
+            : 'Rewrite to pass the "stranger test": would someone with no context know what you do after reading just this line?';
+        richFindings.push({ area: 'Headline Clarity', severity: headlineScore < 12 ? 'high' : headlineScore < 20 ? 'medium' : 'low', whatsHappening, whyItMatters, fix });
+      }
+
+      if (audienceScore < 25) {
+        const whatsHappening = audienceScore <= 8
+          ? 'Your page doesn\'t identify who this product is for.'
+          : audienceScore < 20
+            ? 'There are hints about your audience, but nothing specific enough to make someone say "this is for me."'
+            : 'Audience signals present but could be stronger above the fold.';
+        const whyItMatters = 'People don\'t buy products — they buy solutions to their problems. If they can\'t see themselves in your copy, they assume it\'s not for them.';
+        const fix = audienceScore <= 8
+          ? 'Add one line above the fold that names your audience: "For [specific role] who [specific problem]."'
+          : 'Move your audience language higher on the page. The first screen should answer "who is this for?" without scrolling.';
+        richFindings.push({ area: 'Audience Signal', severity: audienceScore < 12 ? 'high' : audienceScore < 20 ? 'medium' : 'low', whatsHappening, whyItMatters, fix });
+      }
+
+      if (ctaScore < 25) {
+        const whatsHappening = ctaCount === 0
+          ? 'No clear call-to-action button found on the page.'
+          : ctaCount >= 3
+            ? `${ctaCount} different CTAs competing for attention.`
+            : 'CTA exists but the language could be more action-oriented.';
+        const whyItMatters = ctaCount === 0
+          ? 'Without a CTA, you\'re giving a tour with no exit to the gift shop. Visitors enjoy the view and leave.'
+          : 'Every additional choice reduces the likelihood of any choice. One clear CTA converts better than three options.';
+        const fix = ctaCount === 0
+          ? 'Add one button above the fold with a specific action: "Start Free Trial", "Book a Demo", or "See How It Works".'
+          : ctaCount >= 3
+            ? 'Pick your #1 desired action and make it the only primary button. Demote everything else to text links.'
+            : 'Use a verb that tells them what happens next: "Get Started" beats "Learn More". "Book a Demo" beats "Contact Us".';
+        richFindings.push({ area: 'Call to Action', severity: ctaScore < 12 ? 'high' : ctaScore < 20 ? 'medium' : 'low', whatsHappening, whyItMatters, fix });
+      }
+
+      if (trustScore < 25) {
+        const whatsHappening = trustScore === 0
+          ? 'No social proof, testimonials, logos, or numbers anywhere on the page.'
+          : trustScore < 12
+            ? `Only minimal trust signals found (${trustSignals.join(', ')}). Not enough to build confidence.`
+            : `Some trust signals present (${trustSignals.join(', ')}), but there\'s room to strengthen them.`;
+        const whyItMatters = 'Trust is the #1 reason people don\'t convert. They believe you can do what you say — they just don\'t believe it yet. Proof closes that gap.';
+        const fix = trustScore === 0
+          ? 'Add one testimonial quote and one concrete number above the fold. Even "50+ teams use this" is better than nothing.'
+          : !trustSignals.includes('testimonials')
+            ? 'Add a real quote from a real user. One specific testimonial beats ten feature bullet points.'
+            : !trustSignals.includes('concrete numbers')
+              ? 'Add a number that proves impact: users, revenue generated, time saved, conversion rate. Specificity builds belief.'
+              : 'Move your strongest proof higher on the page. Social proof below the fold is social proof most visitors never see.';
+        richFindings.push({ area: 'Trust Signals', severity: trustScore < 12 ? 'high' : trustScore < 20 ? 'medium' : 'low', whatsHappening, whyItMatters, fix });
+      }
+
+      // ============================
+      // QUICK WINS
+      // ============================
+      const quickWins = [];
+      // Generate based on worst scores
+      if (headlineScore < 20) quickWins.push({ title: 'Rewrite your headline', detail: 'Make it pass the stranger test: someone with zero context should know what you do after reading one line.' });
+      if (audienceScore < 20) quickWins.push({ title: 'Name your audience above the fold', detail: 'Add "for [who]" language in the first screen. People need to see themselves before they\'ll keep reading.' });
+      if (ctaCount === 0) quickWins.push({ title: 'Add a primary CTA button', detail: 'One button, one action, above the fold. Make the next step obvious.' });
+      if (ctaCount >= 3) quickWins.push({ title: 'Reduce to one primary CTA', detail: 'Pick the action that matters most. Make everything else a text link or remove it.' });
+      if (trustScore < 15) quickWins.push({ title: 'Add one testimonial or number', detail: 'A single quote from a real user, or one concrete metric, does more than a page of features.' });
+      if (!subText) quickWins.push({ title: 'Add a subheadline', detail: 'One sentence under your H1 that explains the value. The headline hooks — the subheadline sells.' });
+      // Always cap at 3
+      const topWins = quickWins.slice(0, 3);
+      // If we have fewer than 3, add generic good ones
+      if (topWins.length < 3 && trustScore < 25) topWins.push({ title: 'Move social proof above the fold', detail: 'If visitors have to scroll to find your credibility, most will never see it.' });
+      if (topWins.length < 3) topWins.push({ title: 'Test with a stranger', detail: 'Show your site to someone who\'s never seen it. Ask: "What do we do? Who is it for?" If they hesitate, you have work to do.' });
+
+      return { total, pass, headline: h1 || '(none)', scores, findings: richFindings, timeline, quickWins: topWins.slice(0, 3) };
+    }
+
+    // =====================
+    // UI
+    // =====================
+
+    async function runTest() {
+      const input = document.getElementById('urlInput');
+      const errorEl = document.getElementById('urlError');
+      const btn = document.getElementById('runTest');
+
+      errorEl.style.display = 'none';
+      const url = normalizeUrl(input.value);
+
+      if (!url) {
+        errorEl.textContent = 'Please enter a valid URL (e.g. https://yoursite.com)';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      // Show loading
+      btn.disabled = true;
+      btn.textContent = 'Analyzing...';
+      document.getElementById('test-input').style.display = 'none';
+      const loading = document.getElementById('loadingSection');
+      loading.classList.add('visible');
+
+      // Animate steps
+      const steps = ['step1', 'step2', 'step3', 'step4'];
+      let currentStep = 0;
+      document.getElementById(steps[0]).classList.add('active');
+
+      const stepInterval = setInterval(() => {
+        if (currentStep < steps.length) {
+          document.getElementById(steps[currentStep]).classList.remove('active');
+          document.getElementById(steps[currentStep]).classList.add('done');
+        }
+        currentStep++;
+        if (currentStep < steps.length) {
+          document.getElementById(steps[currentStep]).classList.add('active');
+        }
+      }, 800);
+
+      // Fetch + analyze
+      const html = await fetchSiteHtml(url);
+
+      clearInterval(stepInterval);
+      steps.forEach(s => {
+        document.getElementById(s).classList.remove('active');
+        document.getElementById(s).classList.add('done');
+      });
+
+      if (!html) {
+        loading.classList.remove('visible');
+        document.getElementById('test-input').style.display = '';
+        errorEl.textContent = 'Couldn\'t fetch that site. Check the URL and try again, or the site may be blocking external access.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Run the Test';
+        return;
+      }
+
+      const result = analyzeHtml(html, url);
+      if (!result) {
+        loading.classList.remove('visible');
+        document.getElementById('test-input').style.display = '';
+        errorEl.textContent = 'Couldn\'t parse that site. It may use a format we can\'t analyze.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Run the Test';
+        return;
+      }
+
+      // Brief pause for effect, then show email gate
+      await new Promise(r => setTimeout(r, 600));
+      loading.classList.remove('visible');
+
+      // Store result for after email gate
+      window._pendingResult = result;
+      window._pendingUrl = url;
+
+      // Tease the score (blurred)
+      document.getElementById('gateScorePreview').textContent = result.total;
+      document.getElementById('gateVerdictPreview').textContent = result.pass ? 'Pass' : 'Fail';
+      document.getElementById('gateFindingsPreview').textContent = result.findings.length;
+
+      // Show email gate
+      const gate = document.getElementById('gateSection');
+      gate.classList.add('visible');
+      gate.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('gateEmail').focus();
+    }
+
+    function unlockResults() {
+      const email = document.getElementById('gateEmail').value.trim();
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        document.getElementById('gateEmail').style.borderColor = '#E74C3C';
+        document.getElementById('gateEmail').focus();
+        return;
+      }
+
+      const name = document.getElementById('gateName').value.trim();
+
+      // Send lead data via mailto link opened in background
+      // In production, this would hit a form endpoint (Formspree, Google Forms, etc.)
+      // For now, store in localStorage and create a mailto
+      const leads = JSON.parse(localStorage.getItem('bfp_leads') || '[]');
+      leads.push({
+        email,
+        name,
+        url: window._pendingUrl,
+        score: window._pendingResult.total,
+        pass: window._pendingResult.pass,
+        timestamp: new Date().toISOString()
+      });
+      localStorage.setItem('bfp_leads', JSON.stringify(leads));
+
+      // Also send via a hidden form to Formspree (free tier: 50/mo)
+      // Replace YOUR_FORM_ID with actual Formspree endpoint
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('name', name || '(not provided)');
+      formData.append('url', window._pendingUrl);
+      formData.append('score', window._pendingResult.total);
+      formData.append('verdict', window._pendingResult.pass ? 'Pass' : 'Fail');
+      formData.append('_subject', `8-Second Test: ${new URL(window._pendingUrl).hostname} scored ${window._pendingResult.total}/100`);
+
+      fetch('https://formspree.io/f/maqldpkw', { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+
+      // Hide gate, show results
+      document.getElementById('gateSection').classList.remove('visible');
+      showResults(window._pendingResult, window._pendingUrl);
+    }
+
+    // Allow Enter on email field
+    document.getElementById('gateEmail').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') unlockResults();
+    });
+    document.getElementById('gateName').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') unlockResults();
+    });
+
+    function requestFullReview() {
+      const btn = document.getElementById('requestReviewBtn');
+      const conf = document.getElementById('reviewConfirmation');
+
+      // Pull stored lead info
+      const leads = JSON.parse(localStorage.getItem('bfp_leads') || '[]');
+      const lastLead = leads[leads.length - 1] || {};
+
+      // Send to Formspree
+      const formData = new FormData();
+      formData.append('email', lastLead.email || 'unknown');
+      formData.append('name', lastLead.name || '(not provided)');
+      formData.append('url', lastLead.url || window._pendingUrl || 'unknown');
+      formData.append('score', lastLead.score || '');
+      formData.append('request', 'Full 8-Second Review');
+      formData.append('_subject', `Full Review Request: ${lastLead.email} — ${lastLead.url || ''}`);
+
+      fetch('https://formspree.io/f/maqldpkw', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      // Update UI
+      btn.textContent = 'Requested!';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'default';
+      conf.textContent = "You're on the list. Expect a personalized review from Alicia within a week.";
+      conf.style.display = 'block';
+    }
+
+    function showResults(result, url) {
+      const section = document.getElementById('resultsSection');
+      section.classList.add('visible');
+
+      // Scroll to results
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Animate score ring
+      const ring = document.getElementById('scoreRing');
+      const circumference = 2 * Math.PI * 80; // r=80
+      const offset = circumference - (result.total / 100) * circumference;
+      ring.classList.add(result.pass ? 'pass' : 'fail');
+      setTimeout(() => {
+        ring.querySelector('circle').style.strokeDashoffset = offset;
+      }, 100);
+
+      // Animate score number
+      const numEl = document.getElementById('scoreNumber');
+      animateNumber(numEl, result.total);
+
+      // Verdict
+      const verdict = document.getElementById('scoreVerdict');
+      verdict.className = 'score-verdict ' + (result.pass ? 'pass' : 'fail');
+      verdict.textContent = result.pass ? 'Passes the 8-Second Test' : 'Fails the 8-Second Test';
+
+      // Site URL
+      const siteEl = document.getElementById('scoreSite');
+      try { siteEl.textContent = new URL(url).hostname; } catch { siteEl.textContent = url; }
+
+      // Breakdown cards
+      const breakdownEl = document.getElementById('breakdown');
+      breakdownEl.innerHTML = '';
+      const icons = {
+        Headline: { good: '&#10003;', warn: '&#9888;', bad: '&#10007;' },
+        Audience: { good: '&#10003;', warn: '&#9888;', bad: '&#10007;' },
+        CTA: { good: '&#10003;', warn: '&#9888;', bad: '&#10007;' },
+        Trust: { good: '&#10003;', warn: '&#9888;', bad: '&#10007;' },
+      };
+      const subtitles = {
+        Headline: 'What do you do?',
+        Audience: 'Who is it for?',
+        CTA: 'What should I do?',
+        Trust: 'Why believe you?',
+      };
+
+      result.scores.forEach(s => {
+        const pct = s.score / s.max;
+        const level = pct >= 0.8 ? 'good' : pct >= 0.5 ? 'warn' : 'bad';
+        const card = document.createElement('div');
+        card.className = 'breakdown-item';
+        card.innerHTML = `
+          <div class="breakdown-icon ${level}">${icons[s.label][level]}</div>
+          <div class="breakdown-score">${s.score}/${s.max}</div>
+          <div class="breakdown-label">${s.label}</div>
+          <div class="breakdown-detail">${subtitles[s.label]}</div>
+        `;
+        breakdownEl.appendChild(card);
+      });
+
+      // Timeline
+      const timelineEl = document.getElementById('timelineCards');
+      timelineEl.innerHTML = '';
+      result.timeline.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'timeline-card';
+        card.innerHTML = `
+          <div class="timeline-badge ${t.level}">${t.time}</div>
+          <div class="timeline-content">
+            <strong>${t.label}</strong>
+            ${t.quote !== '(no headline found)' && t.quote !== '(no supporting text found)' && t.quote !== '(no clear CTA found)'
+              ? `<div class="timeline-quote">"${t.quote}"</div>`
+              : `<div class="timeline-quote" style="color:#E74C3C;">${t.quote}</div>`
+            }
+            <p>${t.assessment}</p>
+          </div>
+        `;
+        timelineEl.appendChild(card);
+      });
+
+      // Findings
+      const findingsEl = document.getElementById('findings');
+      findingsEl.innerHTML = '<h2>What we found</h2>';
+      result.findings.forEach((f, i) => {
+        const card = document.createElement('div');
+        card.className = `finding-card severity-${f.severity}`;
+        card.innerHTML = `
+          <div class="finding-num">Finding ${i + 1}</div>
+          <h3>${f.area}</h3>
+          <div class="finding-row">
+            <span class="finding-row-label">What:</span>
+            <span class="finding-row-text">${f.whatsHappening}</span>
+          </div>
+          <div class="finding-row">
+            <span class="finding-row-label">Why it matters:</span>
+            <span class="finding-row-text">${f.whyItMatters}</span>
+          </div>
+          <div class="finding-row">
+            <span class="finding-row-label">Fix:</span>
+            <span class="finding-row-text">${f.fix}</span>
+          </div>
+        `;
+        findingsEl.appendChild(card);
+      });
+
+      // Quick Wins
+      const winsEl = document.getElementById('quickwinsList');
+      winsEl.innerHTML = '';
+      result.quickWins.forEach((w, i) => {
+        const item = document.createElement('div');
+        item.className = 'quickwin-item';
+        item.innerHTML = `
+          <div class="quickwin-num">${i + 1}</div>
+          <div class="quickwin-text">
+            <strong>${w.title}</strong>
+            ${w.detail}
+          </div>
+        `;
+        winsEl.appendChild(item);
+      });
+    }
+
+    function animateNumber(el, target) {
+      let current = 0;
+      const duration = 1200;
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out
+        const eased = 1 - Math.pow(1 - progress, 3);
+        current = Math.round(eased * target);
+        el.innerHTML = `${current}<span>/100</span>`;
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    function resetTest() {
+      document.getElementById('resultsSection').classList.remove('visible');
+      document.getElementById('test-input').style.display = '';
+      document.getElementById('urlInput').value = '';
+      document.getElementById('urlError').style.display = 'none';
+      const btn = document.getElementById('runTest');
+      btn.disabled = false;
+      btn.textContent = 'Run the Test';
+
+      // Reset loading steps
+      ['step1', 'step2', 'step3', 'step4'].forEach(s => {
+        const el = document.getElementById(s);
+        el.classList.remove('active', 'done');
+      });
+
+      // Reset score ring
+      const ring = document.getElementById('scoreRing');
+      ring.classList.remove('pass', 'fail');
+      ring.querySelector('circle').style.strokeDashoffset = 502.65;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+
+</body>
+</html>

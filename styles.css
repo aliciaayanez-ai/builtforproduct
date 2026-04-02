@@ -197,6 +197,14 @@ h3 {
   max-width: 560px;
   line-height: 1.7;
 }
+.hero-proof {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-light);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
 .hero .btn {
   margin-top: 32px;
 }
